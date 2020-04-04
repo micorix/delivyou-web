@@ -8,7 +8,7 @@ type SEOProps = {
 const SEO = (props: SEOProps) => {
     return (
         <Helmet>
-            <title>{props.title} | Outwork.</title>
+            <title>{props.title} | DelivYou.</title>
         </Helmet>
     );
 };
