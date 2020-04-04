@@ -11,7 +11,7 @@ const Layout = styled.div`
     min-height: calc(100vh - 2em);
     padding-bottom: 2em;
     h1{
-        font-size: 1.5em;
+        font-size: 1.2em;
     }
 `;
 const Toolbar = styled.div`

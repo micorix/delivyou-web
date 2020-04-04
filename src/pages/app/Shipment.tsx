@@ -1,4 +1,4 @@
-import React, {FormEvent, SyntheticEvent, useState} from "react";
+import React, {FormEvent, SyntheticEvent, useEffect, useState} from "react";
 import {navigate, RouteComponentProps} from "@reach/router";
 import SEO from "../../components/SEO";
 import styled from "styled-components";
@@ -45,12 +45,14 @@ type CreateWorkspaceProps = RouteComponentProps
 const Shipment = (props: CreateWorkspaceProps) => {
     const { register, handleSubmit, watch, setValue } = useForm();
     const savedPlace = watch('savedPlace');
+    useEffect(() => {
     if(savedPlace !== 'select'){
-        const place = savedPlaces.find((x: any) => x.id === savedPlace);
-        // Object.entries(place ? place.data: {}).forEach((key: any, value: any) => {
-        //     setValue(key, value)
-        // })
-    }
+            const place = savedPlaces.find((x: any) => x.id === savedPlace);
+            Object.entries(place ? place.data: {}).forEach(([key, value]) => {
+                setValue(key, value)
+            })
+        }
+    }, [savedPlace])
     const saveShipment = (values: any) => {
         navigate('/app/payment');
     }
@@ -88,9 +90,7 @@ const Shipment = (props: CreateWorkspaceProps) => {
                         </div>
                         <div>
                                 <label>Nr lokalu</label>
-                                <Input ref={register({
-                                    required: true
-                                })} name={"apartmentNo"}/>
+                                <Input ref={register} name={"apartmentNo"}/>
                         </div>
                     </RowGrid>
                     </InputGroup>

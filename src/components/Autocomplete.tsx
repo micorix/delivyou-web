@@ -56,18 +56,13 @@ const Autocomplete = (props: AutocompleteProps) => {
     const getSuggestion = (e: any) => {
         e.persist();
 
-        if(e.keyCode === 13){
+        if(e.keyCode === 13 || !e.keyCode){
             setFilteredSuggestions([]);
             setShowSugestions(false);
             if(inputRef.current)
                 inputRef.current.focus()
             if(props.onChange)
                 props.onChange(e.target.innerText);
-        }else if(e.target.value) {
-            if(inputRef.current)
-                inputRef.current.focus()
-            if (props.onChange)
-                props.onChange(e.target.value);
         }
     };
 
