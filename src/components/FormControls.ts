@@ -13,7 +13,7 @@ export const Input = styled.input`
     }
 `;
 export const Select = styled.select`
-    padding: 5px;
+    padding: 10px;
     border: 2px solid #E6E6EB;
     border-radius: 3px;
     box-sizing: border-box;

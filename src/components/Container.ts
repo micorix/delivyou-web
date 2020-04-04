@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
-const Container = styled.div`
-    width: 80%;
+const Container = styled.div<{narrow?: boolean}>`
+    width: ${props => props.narrow ? 'calc(100% - 2em)' : '80%'};
     margin: auto;
 `;
 

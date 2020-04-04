@@ -1,6 +1,7 @@
 import React, {createRef, forwardRef, HTMLProps, useEffect, useState} from 'react';
 import {Input} from "./FormControls";
 import styled from "styled-components";
+import products from "../data/products";
 
 
 const AutocompleteWrapper = styled.div`
@@ -34,35 +35,51 @@ const SuggestionsList = styled.ul<SuggestionsListProps>`
 `;
 
 
-type Suggestion = string
+type Suggestion = any
 
 type AutocompleteProps = any
 const Autocomplete = (props: AutocompleteProps) => {
     const [filteredSuggestions, setFilteredSuggestions] = useState<Suggestion[]>([]);
     const [showSuggestions, setShowSugestions] = useState<boolean>(false);
+    const [lastSuggestionLabel, setLastSuggestionLabel] = useState<string | null>(null);
     const inputRef = createRef<HTMLInputElement>();
     const handleChange = (e: any) => {
         e.persist();
         const value = e.target.value;
         const filteredSuggestions = value.trim().length > 0 ?
-            props.suggestions.filter((suggestion: Suggestion) => suggestion.toLowerCase().includes(value.trim().toLowerCase()))
+            products.filter((suggestion: Suggestion) => suggestion.label.toLowerCase().includes(value.trim().toLowerCase()))
             : [];
 
         setFilteredSuggestions(filteredSuggestions);
         setShowSugestions(true);
-        if(props.onChange)
-            props.onChange(e.target.value);
+        if(lastSuggestionLabel !== value.trim().toLowerCase()){
+            setLastSuggestionLabel(null)
+            if(props.onSetItemId) {
+                props.onSetItemId(null);
+            }
+        }
+
+        if(props.onUserInputChange){
+            props.onUserInputChange(e.target.value);
+        }
     };
-    const getSuggestion = (e: any) => {
+    const getSuggestion = (i: number, e: any) => {
         e.persist();
 
         if(e.keyCode === 13 || !e.keyCode){
-            setFilteredSuggestions([]);
+
             setShowSugestions(false);
             if(inputRef.current)
-                inputRef.current.focus()
-            if(props.onChange)
-                props.onChange(e.target.innerText);
+                inputRef.current.focus();
+            const item = filteredSuggestions[i];
+            setLastSuggestionLabel(item.label);
+            if(props.onUserInputChange) {
+                props.onUserInputChange(item.label);
+            }
+            if(props.onSetItemId) {
+                props.onSetItemId(item.id);
+            }
+            setFilteredSuggestions([]);
         }
     };
 
@@ -72,12 +89,12 @@ const Autocomplete = (props: AutocompleteProps) => {
              <Input onChange={handleChange} value={props.userInput} ref={inputRef}/>
              <SuggestionsList showSuggestions={showSuggestions}>
                  {
-                     filteredSuggestions.map((suggestion: Suggestion) => (
+                     filteredSuggestions.map((suggestion: Suggestion, i: number) => (
                          <li
                              tabIndex={0}
-                             key={suggestion}
-                             onClick={getSuggestion}
-                             onKeyUp={getSuggestion}>{suggestion}</li>
+                             key={suggestion.id}
+                             onClick={(e: any) => getSuggestion(i, e)}
+                             onKeyUp={(e: any) => getSuggestion(i, e)}>{suggestion.label}</li>
                      ))
                  }
              </SuggestionsList>

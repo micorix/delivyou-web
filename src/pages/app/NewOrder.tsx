@@ -3,8 +3,10 @@ import {navigate, RouteComponentProps} from "@reach/router";
 import SEO from "../../components/SEO";
 import styled from "styled-components";
 import Container from "../../components/Container";
-import {Button, Input, InputAddonGroup} from "../../components/FormControls";
+import {Button, Input, InputAddonGroup, Select} from "../../components/FormControls";
 import Autocomplete from "../../components/Autocomplete";
+import ListItem from "../../components/ListItem";
+import products from "../../data/products";
 
 const ItemInput = styled(Input)`
     border-top-right-radius: 0;
@@ -22,50 +24,85 @@ const List = styled.ul`
     padding-inline-start: 0;
     margin: 2em 0 0 0;
 `
-const ListItem = styled.li`
-    background: #F6F6FB;
-    margin: 10px 0;
-    padding: 10px 0;
-    button{
-        border: none;
-        background: none;
-    }
-    .wrapper{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    }
-`;
+
 const suggestions = [
     'Makaron',
     'Pomidory'
 ]
+const units = ['kg', 'szt']
+const isFromDb = (id: string) => !id.includes('-');
 type CreateWorkspaceProps = RouteComponentProps
 const NewOrder = (props: CreateWorkspaceProps) => {
-    const [inputValue, setItemInputValue] = useState('');
-    const [items, setItems] = useState<string[]>([]);
+    const [inputValue, setInputValue] = useState('');
+    const [inputItemId, setInputItemId] = useState<string | null>(null);
+    const [activeItemId, setActiveItemId] = useState<string | null>(null);
+    const [items, setItems] = useState<any[]>([]);
+    const byId = (id: string): any => products.find((x: any) => x.id === id);
     const addItem = (e: any) => {
         e.persist();
         e.preventDefault();
-        if (inputValue.trim().length === 0)
+        if (inputValue.trim().length === 0 || items.find((x: any) => x.id === inputItemId))
                 return;
 
-        setItems([
-            ...items,
-            inputValue
-        ]);
-        setItemInputValue('');
+        if(inputItemId){
+            setItems([
+                ...items,
+                {
+                    ...byId(inputItemId),
+                    quantity: 1
+                }
+            ]);
+        }else{
+            setItems([
+                ...items,
+                {
+                    label: inputValue,
+                    id: '--s',
+                    price: 0,
+                    quantity: 1
+                }
+            ]);
+        }
+
+        setInputItemId(null);
+        setInputValue('')
     };
     const removeItem = (itemIdx: number) => {
-        console.log(itemIdx)
         let updatedItems = items;
         updatedItems.splice(itemIdx, 1);
-        console.log(updatedItems)
         setItems([...updatedItems])
     };
     const saveItems = () => {
         navigate('/app/shipment');
     };
+    const isActive = (id: any) => id === activeItemId;
+    const toggleActiveItemId = (id: string) => setActiveItemId(isActive(id) ? null : id);
+
+    const changeQuantity = (index: number, decrement: boolean) => {
+        const updatedItems = items;
+        const updatedQuantity = updatedItems[index].quantity+(decrement ? -1 : 1);
+        if(updatedQuantity <= 0)
+                return;
+
+        updatedItems[index].quantity = updatedQuantity;
+        setItems([...updatedItems])
+    }
+    const changePrice = (index: number, price: number) => {
+        const updatedItems = items;
+        if(price < 0)
+            return;
+
+        updatedItems[index].price = price;
+        setItems([...updatedItems])
+    }
+    const changeUnit = (index: number, unit: string) => {
+        const updatedItems = items;
+        if(!units.includes(unit))
+            return;
+
+        updatedItems[index].unit = unit;
+        setItems([...updatedItems])
+    }
     return (
         <>
             <SEO title={"Nowe zamówienie"}/>
@@ -74,9 +111,10 @@ const NewOrder = (props: CreateWorkspaceProps) => {
                 <form onSubmit={addItem}>
                     <InputAddonGroup>
                         <Autocomplete
-                            suggestions={suggestions}
                             userInput={inputValue}
-                            onChange={setItemInputValue}
+                            onUserInputChange={setInputValue}
+                            itemId={inputItemId}
+                            onSetItemId={setInputItemId}
                         />
                         <button type={"submit"}>
                             <span className="material-icons">add</span>
@@ -86,19 +124,21 @@ const NewOrder = (props: CreateWorkspaceProps) => {
             </Container>
                 <List>
                     {
-                        items.map((item: string, i: number) => (
-                            <ListItem key={item}>
-                                <Container>
-                                <div className="wrapper">
-                                    <span className="item">
-                                    {item}
-                                </span>
-                                    <button onClick={() => removeItem(i)}>
-                                        <span className="material-icons">remove</span>
-                                    </button>
-                                </div>
-                                </Container>
-                            </ListItem>
+                        items.map((item: any, i: number) => (
+                            <ListItem
+                                key={item.id}
+                                item={item}
+                                active={isActive(item.id)}
+                                onIncrementQuantity={() => changeQuantity(i, false)}
+                                onDecrementQuantity={() => changeQuantity(i, true)}
+                                onSetPrice={(e: any) => changePrice(i, e.target.value)}
+                                onSetUnit={(e: any) => {
+                                    if(!isFromDb(item.id))
+                                        changeUnit(i, e.target.value)
+                                }}
+                                onToggleActiveItem={() => toggleActiveItemId(item.id)}
+                                onRemoveItem={() => removeItem(i)}
+                            />
                         ))
                     }
                 </List>
