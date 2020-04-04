@@ -8,7 +8,7 @@ const Routing = () => {
       <Router>
           {/*<LandingPage path={"/"}/>*/}
           <AppLayout path={"/app/*"} />
-          <Redirect from={"/"} to={"/app"} />
+          <Redirect noThrow from={"/"} to={"/app"} />
       </Router>
   );
 };

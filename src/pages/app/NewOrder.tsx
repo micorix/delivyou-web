@@ -4,6 +4,7 @@ import SEO from "../../components/SEO";
 import styled from "styled-components";
 import Container from "../../components/Container";
 import {Button, Input, InputAddonGroup} from "../../components/FormControls";
+import Autocomplete from "../../components/Autocomplete";
 
 const ItemInput = styled(Input)`
     border-top-right-radius: 0;
@@ -35,16 +36,14 @@ const ListItem = styled.li`
     justify-content: space-between;
     }
 `;
-const Centered = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-`
+const suggestions = [
+    'Makaron',
+    'Pomidory'
+]
 type CreateWorkspaceProps = RouteComponentProps
 const NewOrder = (props: CreateWorkspaceProps) => {
     const [inputValue, setItemInputValue] = useState('');
     const [items, setItems] = useState<string[]>([]);
-    const updateItemInputValue = (e: any) => setItemInputValue(e.target.value);
     const addItem = (e: any) => {
         e.persist();
         e.preventDefault();
@@ -74,7 +73,11 @@ const NewOrder = (props: CreateWorkspaceProps) => {
                 <h1>Co Ci dostarczyć?</h1>
                 <form onSubmit={addItem}>
                     <InputAddonGroup>
-                        <ItemInput onChange={updateItemInputValue} value={inputValue} />
+                        <Autocomplete
+                            suggestions={suggestions}
+                            userInput={inputValue}
+                            onChange={setItemInputValue}
+                        />
                         <button type={"submit"}>
                             <span className="material-icons">add</span>
                         </button>

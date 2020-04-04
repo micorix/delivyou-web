@@ -8,7 +8,11 @@ import OrderConfirmation from "./OrderConfirmation";
 
 type AppLayoutProps = RouteComponentProps;
 const Layout = styled.div`
-    height: 100vh;
+    min-height: calc(100vh - 2em);
+    padding-bottom: 2em;
+    h1{
+        font-size: 1.5em;
+    }
 `;
 const Toolbar = styled.div`
     padding: 1em 10px;
@@ -20,6 +24,7 @@ const Toolbar = styled.div`
     h4{
         text-align: center;
         margin: 0;
+        font-size: 1.2em;
     }
 `
 const AppLayout = (props: AppLayoutProps) => {
@@ -33,7 +38,7 @@ const AppLayout = (props: AppLayoutProps) => {
                 <Shipment path={"/shipment"} />
                 <Payment path={"/payment"} />
                 <OrderConfirmation path={"/order-confirmation"} />
-                <Redirect from={"/"} to={"/app/new-order"} />
+                <Redirect noThrow from={"/"} to={"/app/new-order"} />
             </Router>
         </Layout>
     );

@@ -61,8 +61,8 @@ const Shipment = (props: CreateWorkspaceProps) => {
                 <h1>Adres</h1>
                 <form onSubmit={handleSubmit(saveShipment)}>
                     <Separator text={"Wybierz z zapisanych miejsc"}/>
-                    <SavedPlaceSelect ref={register} name={"savedPlace"}>
-                        <option value="select" disabled selected>Wybierz</option>
+                    <SavedPlaceSelect ref={register} name={"savedPlace"} defaultValue={"select"}>
+                        <option value="select" disabled>Wybierz</option>
                         <option value="home">Dom</option>
                     </SavedPlaceSelect>
                     <Separator text={"lub uzupełnij"}/>
