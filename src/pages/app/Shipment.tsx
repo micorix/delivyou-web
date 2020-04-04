@@ -5,6 +5,7 @@ import styled from "styled-components";
 import Container from "../../components/Container";
 import {Button, Input, InputAddonGroup, InputGroup, Select} from "../../components/FormControls";
 import {useForm} from "react-hook-form";
+import {Separator} from "../../components/Utils";
 
 const RowGrid = styled.div`
     display: grid;
@@ -26,28 +27,7 @@ const SavedPlaceSelect = styled(Select)`
         text-align: center;
     }
 `;
-const Separator = styled.div`
-    margin: 1em 0;
-    text-align: center;
-    position: relative;
-    span{
-        background: #e5e5e5;
-        padding: 0 10px;
-        color: rgba(0, 0, 0, 0.8);
-        font-size: .8em;
-    }
-    &::after{
-        content: '';
-        display: block;
-        position: absolute;
-        top: 50%;
-        left: 0;
-        width: 100%;
-        height: 1px;
-        background: rgba(0, 0, 0, 0.2);
-        z-index: -1;
-    }
-`
+
 const savedPlaces = [
     {
         name: 'Dom',
@@ -80,16 +60,12 @@ const Shipment = (props: CreateWorkspaceProps) => {
             <Container>
                 <h1>Adres</h1>
                 <form onSubmit={handleSubmit(saveShipment)}>
-                    <Separator>
-                        <span>Wybierz z zapisanych miejsc</span>
-                    </Separator>
+                    <Separator text={"Wybierz z zapisanych miejsc"}/>
                     <SavedPlaceSelect ref={register} name={"savedPlace"}>
                         <option value="select" disabled selected>Wybierz</option>
                         <option value="home">Dom</option>
                     </SavedPlaceSelect>
-                    <Separator>
-                        <span>lub uzupełnij</span>
-                    </Separator>
+                    <Separator text={"lub uzupełnij"}/>
                     <InputGroup>
                         <label>Odbiorca</label>
                         <Input ref={register({

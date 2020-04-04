@@ -4,6 +4,7 @@ import SEO from "../../components/SEO";
 import styled from "styled-components";
 import Container from "../../components/Container";
 import {Button, Input, InputAddonGroup, InputGroup, Select} from "../../components/FormControls";
+import {Separator} from "../../components/Utils";
 
 const CardItem = styled.div`
     border: 2px solid ${props => props.theme.colors.primary};
@@ -18,28 +19,7 @@ const Centered = styled.div`
     align-items: center;
     justify-content: center;
 `;
-const Separator = styled.div`
-    margin: 1em 0;
-    text-align: center;
-    position: relative;
-    span{
-        background: #e5e5e5;
-        padding: 0 10px;
-        color: rgba(0, 0, 0, 0.8);
-        font-size: .8em;
-    }
-    &::after{
-        content: '';
-        display: block;
-        position: absolute;
-        top: 50%;
-        left: 0;
-        width: 100%;
-        height: 1px;
-        background: rgba(0, 0, 0, 0.2);
-        z-index: -1;
-    }
-`;
+
 const AddCardButton = styled.button`
     background: none;
     border: none;
@@ -50,6 +30,7 @@ const AddCardButton = styled.button`
     padding: 10px;
     margin-top: 1em;
     transition: .2s all;
+    outline: none;
     .material-icons{
         margin-right: 10px;
     }
@@ -72,9 +53,7 @@ const Payment = (props: CreateWorkspaceProps) => {
                     <span className="card">karta</span>
                     <span className="no">**** 1234</span>
                 </CardItem>
-                <Separator>
-                    <span>lub</span>
-                </Separator>
+                <Separator text={"lub"} />
                 <AddCardButton>
                     <span className="material-icons">add</span>
                     <span className="action">Dodaj kartę</span>

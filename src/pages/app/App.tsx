@@ -13,7 +13,10 @@ const Layout = styled.div`
 const Toolbar = styled.div`
     padding: 1em 10px;
     margin-bottom: 1em;
-    border-bottom: 1px solid #aaa;
+    background: #4E37B2;
+    border-bottom-left-radius: 4em;
+    border-bottom-right-radius: 4em;
+    color: white;
     h4{
         text-align: center;
         margin: 0;

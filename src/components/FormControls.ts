@@ -2,10 +2,11 @@ import styled from "styled-components";
 
 export const Input = styled.input`
     padding: 10px;
-    border: 2px solid #aaa;
+    border: 2px solid #E6E6EB;
     border-radius: 3px;
     box-sizing: border-box;
     width: 100%;
+    background: #F6F6FB;
     &:focus{
         outline: none;
         border-color: ${props => props.theme.colors.primary};
@@ -13,7 +14,7 @@ export const Input = styled.input`
 `;
 export const Select = styled.select`
     padding: 5px;
-    border: 2px solid #aaa;
+    border: 2px solid #E6E6EB;
     border-radius: 3px;
     box-sizing: border-box;
     background: white;
@@ -38,16 +39,28 @@ export const InputAddonGroup = styled.div`
         display: flex;
         align-items: center;
         justify-content: center;
-        background: ${props => props.theme.colors.primary};
+        background: none;
+        color: #FE774F;
+        border: 2px solid #E6E6EB;
+        border-left-color: transparent;
         border-top-right-radius: 3px;
         border-bottom-right-radius: 3px;
+        &:focus{
+            outline: none;
+            border-color: ${props => props.theme.colors.secondary};
+        }
     }
 `;
 export const Button = styled.button`
     margin-top: 2em;
-    padding: 10px 2em;
-    background: ${props => props.theme.colors.primary};
+    padding: .7em 2em;
+    background: ${props => props.theme.colors.secondary};
     color: white;
     border: none;
-    border-radius: 3px;
+    border-radius: 10px;
+    width: 100%;
+    transition: .2s all;
+    &:focus{
+        box-shadow: 10px 10px 10px #E6E6EB;
+    }
 `;

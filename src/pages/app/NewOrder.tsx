@@ -6,13 +6,15 @@ import Container from "../../components/Container";
 import {Button, Input, InputAddonGroup} from "../../components/FormControls";
 
 const ItemInput = styled(Input)`
-
-    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
 `;
 const AddButton = styled(Button)`
     margin-top: 2em;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
+    color: #E6E6EB;
+    background: none;
 `
 const List = styled.ul`
     display: block;
@@ -20,12 +22,17 @@ const List = styled.ul`
     margin: 2em 0 0 0;
 `
 const ListItem = styled.li`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    background: #F6F6FB;
+    margin: 10px 0;
+    padding: 10px 0;
     button{
         border: none;
         background: none;
+    }
+    .wrapper{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     }
 `;
 const Centered = styled.div`
@@ -35,10 +42,8 @@ const Centered = styled.div`
 `
 type CreateWorkspaceProps = RouteComponentProps
 const NewOrder = (props: CreateWorkspaceProps) => {
-    const [inputValue, setItemInputValue] = useState('')
-    const [items, setItems] = useState([
-        'makaron'
-    ]);
+    const [inputValue, setItemInputValue] = useState('');
+    const [items, setItems] = useState<string[]>([]);
     const updateItemInputValue = (e: any) => setItemInputValue(e.target.value);
     const addItem = (e: any) => {
         e.persist();
@@ -75,24 +80,28 @@ const NewOrder = (props: CreateWorkspaceProps) => {
                         </button>
                     </InputAddonGroup>
                 </form>
+            </Container>
                 <List>
                     {
                         items.map((item: string, i: number) => (
                             <ListItem key={item}>
-                                <span className="item">
+                                <Container>
+                                <div className="wrapper">
+                                    <span className="item">
                                     {item}
                                 </span>
-                                <button onClick={() => removeItem(i)}>
-                                    <span className="material-icons">remove</span>
-                                </button>
+                                    <button onClick={() => removeItem(i)}>
+                                        <span className="material-icons">remove</span>
+                                    </button>
+                                </div>
+                                </Container>
                             </ListItem>
                         ))
                     }
                 </List>
-                <Centered>
-                    <AddButton onClick={saveItems}>Zamów</AddButton>
-                </Centered>
-            </Container>
+                <Container>
+                    <Button onClick={saveItems}>Zamów</Button>
+                </Container>
         </>
     )
 }
