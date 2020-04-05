@@ -1,27 +1,27 @@
 import styled from "styled-components";
 
-export const Input = styled.input`
+export const Input = styled.input<{error?: (boolean | null)}>`
     padding: 10px;
-    border: 2px solid #E6E6EB;
     border-radius: 3px;
     box-sizing: border-box;
     width: 100%;
     background: #F6F6FB;
+    border: 2px solid ${props => props.error ? 'red' : '#E6E6EB'};
     &:focus{
         outline: none;
-        border-color: ${props => props.theme.colors.primary};
+        border-color: ${props => props.error ? 'red' : props.theme.colors.primary};
     }
 `;
-export const Select = styled.select`
+export const Select = styled.select<{error?: (boolean | null)}>`
     padding: 10px;
-    border: 2px solid #E6E6EB;
+    border: 2px solid ${props => props.error ? 'red' : '#E6E6EB'};
     border-radius: 3px;
     box-sizing: border-box;
     background: white;
     width: 100%;
     &:focus{
         outline: none;
-        border-color: ${props => props.theme.colors.primary};
+        border-color: ${props => props.error ? 'red' : props.theme.colors.primary};
     }
 `;
 export const InputGroup = styled.div`
@@ -49,6 +49,9 @@ export const InputAddonGroup = styled.div`
             outline: none;
             border-color: ${props => props.theme.colors.secondary};
         }
+    }
+    span{
+        margin-left: 5px;
     }
 `;
 export const Button = styled.button`

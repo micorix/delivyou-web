@@ -45,6 +45,9 @@ const Autocomplete = (props: AutocompleteProps) => {
     const inputRef = createRef<HTMLInputElement>();
     const handleChange = (e: any) => {
         e.persist();
+        if(props.error && props.setError){
+            props.setError(null);
+        }
         const value = e.target.value;
         const filteredSuggestions = value.trim().length > 0 ?
             products.filter((suggestion: Suggestion) => suggestion.label.toLowerCase().includes(value.trim().toLowerCase()))
@@ -86,7 +89,7 @@ const Autocomplete = (props: AutocompleteProps) => {
 
      return (
          <AutocompleteWrapper>
-             <Input onChange={handleChange} value={props.userInput} ref={inputRef}/>
+             <Input onChange={handleChange} value={props.userInput} ref={inputRef} error={props.error}/>
              <SuggestionsList showSuggestions={showSuggestions}>
                  {
                      filteredSuggestions.map((suggestion: Suggestion, i: number) => (

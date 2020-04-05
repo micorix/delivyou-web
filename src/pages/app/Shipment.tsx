@@ -44,7 +44,7 @@ const savedPlaces = [
 ]
 type CreateWorkspaceProps = RouteComponentProps
 const Shipment = (props: CreateWorkspaceProps) => {
-    const { register, handleSubmit, watch, setValue } = useForm();
+    const { register, handleSubmit, watch, setValue, errors } = useForm();
     const savedPlace = watch('savedPlace');
     useEffect(() => {
     if(savedPlace !== 'select'){
@@ -71,23 +71,32 @@ const Shipment = (props: CreateWorkspaceProps) => {
                     <Separator text={"lub uzupełnij"}/>
                     <InputGroup>
                         <label>Odbiorca</label>
-                        <Input ref={register({
-                            required: true
-                        })} name={"recipient"} />
+                        <Input
+                            ref={register({
+                                required: true
+                            })}
+                            error={Boolean(errors.recipient)}
+                            name={"recipient"} />
                     </InputGroup>
                     <InputGroup>
                         <label>Ulica</label>
-                        <Input ref={register({
+                        <Input
+                            ref={register({
                             required: true
-                        })} name={"street"} />
+                            })}
+                            error={Boolean(errors.street)}
+                            name={"street"} />
                     </InputGroup>
                     <InputGroup>
                     <RowGrid>
                         <div>
                                 <label>Nr budynku</label>
-                                <Input ref={register({
-                                    required: true
-                                })} name={"houseNo"} />
+                                <Input
+                                    ref={register({
+                                        required: true
+                                    })}
+                                    error={Boolean(errors.houseNo)}
+                                    name={"houseNo"} />
                         </div>
                         <div>
                                 <label>Nr lokalu</label>

@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Container from "../components/Container";
-import { Input, Select} from "../components/FormControls";
+import {Input, InputAddonGroup, Select} from "../components/FormControls";
 
 const ListItemWrapper = styled.li`
     background: #F6F6FB;
@@ -49,6 +49,9 @@ type ListItemProps = {
     onSetUnit: any
     onToggleActiveItem: any
     onRemoveItem: any
+    error: string | null
+    setError: any
+
 }
 const ListItem = (props: ListItemProps) => {
     return (
@@ -82,14 +85,30 @@ const ListItem = (props: ListItemProps) => {
                 </div>
                 <Details active={props.active}>
                     <div>
-                        <Input
-                            type={"number"}
-                            placeholder={"Cena"} onChange={props.onSetPrice} value={props.item.price}/>
+                        <InputAddonGroup>
+                            <Input
+                                type={"number"}
+                                error={Boolean(props.error && props.error.startsWith(props.item.id) && props.error.endsWith('___price'))}
+                                onChange={(e: any) => {
+                                    props.onSetPrice(e);
+                                    if(props.error && props.error.startsWith(props.item.id) && props.error.endsWith('___price')){
+                                        props.setError(null);
+                                    }
+                                }}
+                                placeholder={"Cena"} value={props.item.price !== 0 ? props.item.price : ''}/>
+                                <span>zł</span>
+                        </InputAddonGroup>
                     </div>
                     <div>
                         <Select
-                            onChange={props.onSetUnit}
+                            onChange={(e: any) => {
+                                props.onSetUnit(e);
+                                if(props.error && props.error.startsWith(props.item.id) && props.error.endsWith('___unit')){
+                                    props.setError(null);
+                                }
+                            }}
                             value={props.item.unit ? props.item.unit : "select"}
+                            error={Boolean(props.error && props.error.startsWith(props.item.id) && props.error.endsWith('___unit'))}
                             disabled={!props.item.id.includes('-')}>
                             <option value="select" disabled={true}>Jednostka</option>
                             <option value="szt">szt</option>

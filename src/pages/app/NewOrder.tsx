@@ -8,39 +8,38 @@ import Autocomplete from "../../components/Autocomplete";
 import ListItem from "../../components/ListItem";
 import products from "../../data/products";
 import AppLayout from "../../components/AppLayout";
+import { v4 as uuidv4 } from 'uuid';
 
-const ItemInput = styled(Input)`
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-`;
-const AddButton = styled(Button)`
-    margin-top: 2em;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    color: #E6E6EB;
-    background: none;
-`
 const List = styled.ul`
     display: block;
     padding-inline-start: 0;
     margin: 2em 0 0 0;
 `
 
-const Fab = styled.div`
-    position: absolute;
-    bottom: 1em;
-    right: 1em;
-    padding: 10px;
-    background: ${props => props.theme.colors.primary};
-    color: white;
-    border-radius: 50%;
+// const Fab = styled.div`
+//     position: absolute;
+//     bottom: 1em;
+//     right: 1em;
+//     padding: 10px;
+//     background: ${props => props.theme.colors.primary};
+//     color: white;
+//     border-radius: 50%;
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//     .material-icons{
+//         font-size: 1.8em !important;
+//     }
+// `;
+const BarcodeIcon = styled.div`
+    
+    margin: 0 0 0 1em;
     display: flex;
     align-items: center;
-    justify-content: center;
-    .material-icons{
-        font-size: 1.8em !important;
+    img{
+        height: 20px;
     }
-`;
+`
 const ModalWrapper = styled.div<{active: boolean}>`
     position: absolute;
     top: 0;
@@ -57,6 +56,11 @@ const Modal = styled.div`
     padding: 10px;
     background: white;
     border-radius: 5px;
+    
+    h3{
+        text-align: center;
+        line-height: 1.6em;
+    }
 `;
 const CityList = styled.ul`
     display: block;
@@ -73,12 +77,7 @@ const CityList = styled.ul`
 const CitySelect = styled.div`
     font-weight: bold;
     margin-bottom: 2em;
-    small{
-        font-weight: normal;
-        display: block;
-        margin-top: .5em;
-        cursor: pointer;
-    }
+    cursor: pointer;
 `
 const units = ['kg', 'szt']
 const isFromDb = (id: string) => !id.includes('-');
@@ -90,6 +89,7 @@ const NewOrder = (props: CreateWorkspaceProps) => {
     const [city, setCity] = useState<null | string>(null);
     const [modalOpen, setModalOpen] = useState<boolean>(true);
     const [items, setItems] = useState<any[]>([]);
+    const [error, setError] = useState<string | null>(null);
     const byId = (id: string): any => products.find((x: any) => x.id === id);
     const selectCity = (city: string) => {
         setCity(city);
@@ -114,7 +114,7 @@ const NewOrder = (props: CreateWorkspaceProps) => {
                 ...items,
                 {
                     label: inputValue,
-                    id: '--s',
+                    id: uuidv4(),
                     price: 0,
                     quantity: 1,
                     unit: 'select'
@@ -132,11 +132,18 @@ const NewOrder = (props: CreateWorkspaceProps) => {
     };
     const saveItems = () => {
         if (items.length === 0){
+            setError('___input-add___')
             return;
         }
         for(const item of items){
-            if(item.price <= 0 || item.unit === 'select'){
+            if(item.price <= 0){
                 setActiveItemId(item.id);
+                setError(`${item.id}___price`);
+                return;
+            }
+            if(item.unit === 'select'){
+                setActiveItemId(item.id);
+                setError(`${item.id}___unit`);
                 return;
             }
         }
@@ -175,7 +182,7 @@ const NewOrder = (props: CreateWorkspaceProps) => {
             <SEO title={"Nowe zamówienie"}/>
 
             <Container>
-                <CitySelect>Wybrane miasto: {city} <small onClick={() => setModalOpen(true)}>Zmień miasto</small></CitySelect>
+                <CitySelect onClick={() => setModalOpen(true)}>Wybrane miasto: {city}</CitySelect>
                 <h1>Co Ci dostarczyć?</h1>
                 <form onSubmit={addItem}>
                     <InputAddonGroup>
@@ -184,10 +191,15 @@ const NewOrder = (props: CreateWorkspaceProps) => {
                             onUserInputChange={setInputValue}
                             itemId={inputItemId}
                             onSetItemId={setInputItemId}
+                            error={error === '___input-add___'}
+                            setError={setError}
                         />
                         <button type={"submit"}>
                             <span className="material-icons">add</span>
                         </button>
+                        <BarcodeIcon>
+                            <img src={require('../../design/assets/barcode.png')} alt="Scan barcode"/>
+                        </BarcodeIcon>
                     </InputAddonGroup>
                 </form>
             </Container>
@@ -207,6 +219,8 @@ const NewOrder = (props: CreateWorkspaceProps) => {
                                 }}
                                 onToggleActiveItem={() => toggleActiveItemId(item.id)}
                                 onRemoveItem={() => removeItem(i)}
+                                error={error}
+                                setError={setError}
                             />
                         ))
                     }
@@ -214,12 +228,12 @@ const NewOrder = (props: CreateWorkspaceProps) => {
                 <Container>
                     <Button onClick={saveItems}>Zamów</Button>
                 </Container>
-            <Fab>
-                <span className="material-icons">camera_alt</span>
-            </Fab>
+            {/*<Fab>*/}
+            {/*    <span className="material-icons">camera_alt</span>*/}
+            {/*</Fab>*/}
             <ModalWrapper active={modalOpen}>
                 <Modal>
-                    <h3>Wybierz miasto obsłgiwane przez DelivYou</h3>
+                    <h3>Wybierz miasto obsługiwane przez DelivYou</h3>
                     <CityList>
                         <li onClick={() => selectCity('Warszawa')}>Warszawa</li>
                         <li onClick={() => selectCity('Kraków')}>Kraków</li>

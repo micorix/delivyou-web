@@ -4,6 +4,7 @@ import SEO from "../../components/SEO";
 import styled from "styled-components";
 import Container from "../../components/Container";
 import {Button, Input, InputAddonGroup, InputGroup, Select} from "../../components/FormControls";
+import AppLayout from "../../components/AppLayout";
 
 const CardItem = styled.div`
     border: 2px solid ${props => props.theme.colors.primary};
@@ -18,44 +19,8 @@ const Centered = styled.div`
     align-items: center;
     justify-content: center;
 `;
-const Separator = styled.div`
-    margin: 1em 0;
+const Header = styled.h1`
     text-align: center;
-    position: relative;
-    span{
-        background: #e5e5e5;
-        padding: 0 10px;
-        color: rgba(0, 0, 0, 0.8);
-        font-size: .8em;
-    }
-    &::after{
-        content: '';
-        display: block;
-        position: absolute;
-        top: 50%;
-        left: 0;
-        width: 100%;
-        height: 1px;
-        background: rgba(0, 0, 0, 0.2);
-        z-index: -1;
-    }
-`;
-const AddCardButton = styled.button`
-    background: none;
-    border: none;
-    border-radius: 3px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    margin-top: 1em;
-    transition: .2s all;
-    .material-icons{
-        margin-right: 10px;
-    }
-    &:hover{
-        background: rgba(0,0,0,0.05);
-    }
 `
 type CreateWorkspaceProps = RouteComponentProps
 const OrderConfirmation = (props: CreateWorkspaceProps) => {
@@ -63,15 +28,15 @@ const OrderConfirmation = (props: CreateWorkspaceProps) => {
         navigate('/app')
     }
     return (
-        <>
+        <AppLayout goBack={false}>
             <SEO title={"Nowe zamówienie"}/>
             <Container>
-                <h1>Zamówienie zostało przyjęte</h1>
+                <Header>Zamówienie zostało przyjęte</Header>
                 <Centered>
                     <Button onClick={complete}>Ok</Button>
                 </Centered>
             </Container>
-        </>
+        </AppLayout>
     )
 }
 
