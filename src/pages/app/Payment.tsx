@@ -1,13 +1,13 @@
-import React, {FormEvent, SyntheticEvent, useState} from "react";
+import React from "react";
 import {navigate, RouteComponentProps} from "@reach/router";
 import SEO from "../../components/SEO";
 import styled from "styled-components";
 import Container from "../../components/Container";
-import {Button, Input, InputAddonGroup, InputGroup, Select} from "../../components/FormControls";
+import {Button, Select} from "../../components/FormControls";
 import {Separator} from "../../components/Utils";
 import AppLayout from "../../components/AppLayout";
 import {makeAction} from "../../store/makeAction";
-import {SAVE_DELIVERY_DATA, SAVE_SHIPPING_DATA} from "../../store/actions";
+import {SAVE_DELIVERY_DATA} from "../../store/actions";
 import {connect} from "react-redux";
 import {useForm} from "react-hook-form";
 
@@ -49,21 +49,43 @@ const RowGrid = styled.div`
     grid-column-gap: 1em;
     margin-bottom: 2em;
 `
+const Calc = styled.div`
+    background: ${props => props.theme.colors.primary};
+    border-radius: 10px;
+    padding: 10px 1em;
+    margin-top: 2em;
+    color: white;
+`;
+const Row = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    &:last-of-type{
+        margin-top: 10px;
+        padding-top: 20px;
+        border-top: 2px solid white;
+        font-weight: bold;
+    }
+`
 type PaymentProps = RouteComponentProps & {
     persistData: any
+    persistedItems: any
     persistedData: any
 }
 const Payment = (props: PaymentProps) => {
     const { register, handleSubmit} = useForm({
         defaultValues: props.persistedData
     });
+    const shoppingPrice = props.persistedItems.reduce((prev: number, curr: any) => prev+(curr.quantity * curr.price), 0);
+
     const complete = (values: any) => {
         props.persistData(values);
         navigate('/app/order-confirmation')
     }
     return (
         <AppLayout goBack={"/app/shipment"}>
-            <SEO title={"Potwierdzenie zamówienia"}/>
+            <SEO title={"Nowe zamówienie - Płatność"}/>
             <Container>
                 <form onSubmit={handleSubmit(complete)}>
                 <h1>Czas dostawy</h1>
@@ -108,6 +130,20 @@ const Payment = (props: PaymentProps) => {
                     <span className="material-icons">add</span>
                     <span className="action">Dodaj kartę</span>
                 </AddCardButton>
+                    <Calc>
+                        <Row>
+                            <span>Koszt zakupów</span>
+                            <span>{shoppingPrice.toFixed(2)} zł</span>
+                        </Row>
+                        <Row>
+                            <span>Cena dostawy</span>
+                            <span>7 zł</span>
+                        </Row>
+                        <Row>
+                            <span>Razem</span>
+                            <span>{(shoppingPrice+7).toFixed(2)} zł</span>
+                        </Row>
+                    </Calc>
                 <Centered>
                     <Button type={"submit"}>Zapłać</Button>
                 </Centered>
@@ -118,7 +154,8 @@ const Payment = (props: PaymentProps) => {
 }
 
 const mapStateToProps = (state: any) => ({
-    persistedData: state.deliveryData
+    persistedData: state.deliveryData,
+    persistedItems: state.items
 });
 const mapDispatchToProps = {
     persistData: makeAction(SAVE_DELIVERY_DATA)

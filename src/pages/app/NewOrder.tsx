@@ -1,41 +1,26 @@
-import React, {FormEvent, SyntheticEvent, useState} from "react";
+import React, {KeyboardEvent, useState} from "react";
 import {navigate, RouteComponentProps} from "@reach/router";
 import SEO from "../../components/SEO";
 import styled from "styled-components";
 import Container from "../../components/Container";
-import {Button, Input, InputAddonGroup, Select} from "../../components/FormControls";
+import {Button, InputAddonGroup} from "../../components/FormControls";
 import Autocomplete from "../../components/Autocomplete";
 import ListItem from "../../components/ListItem";
-import products from "../../data/products";
+import products, {Product} from "../../data/products";
 import AppLayout from "../../components/AppLayout";
 import { v4 as uuidv4 } from 'uuid';
 import {connect} from "react-redux";
 import {makeAction} from "../../store/makeAction";
 import {SAVE_CITY, SAVE_ITEMS} from "../../store/actions";
+import cities from "../../data/cities";
 
 const List = styled.ul`
     display: block;
     padding-inline-start: 0;
     margin: 2em 0 0 0;
-`
+`;
 
-// const Fab = styled.div`
-//     position: absolute;
-//     bottom: 1em;
-//     right: 1em;
-//     padding: 10px;
-//     background: ${props => props.theme.colors.primary};
-//     color: white;
-//     border-radius: 50%;
-//     display: flex;
-//     align-items: center;
-//     justify-content: center;
-//     .material-icons{
-//         font-size: 1.8em !important;
-//     }
-// `;
 const BarcodeIcon = styled.div`
-    
     margin: 0 0 0 1em;
     display: flex;
     align-items: center;
@@ -91,7 +76,7 @@ type NewOrderProps = RouteComponentProps & {
     persistCity: any
 }
 const NewOrder = (props: NewOrderProps) => {
-    const [inputValue, setInputValue] = useState('');
+    const [inputValue, setInputValue] = useState<string>('');
     const [inputItemId, setInputItemId] = useState<string | null>(null);
     const [activeItemId, setActiveItemId] = useState<string | null>(null);
     const [city, setCity] = useState<null | string>(props.persistedCity ? props.persistedCity : null);
@@ -103,7 +88,7 @@ const NewOrder = (props: NewOrderProps) => {
         setCity(city);
         props.persistCity(city);
         setModalOpen(false)
-    }
+    };
     const addItem = (e: any) => {
         e.persist();
         e.preventDefault();
@@ -170,7 +155,7 @@ const NewOrder = (props: NewOrderProps) => {
 
         updatedItems[index].quantity = updatedQuantity;
         setItems([...updatedItems])
-    }
+    };
     const changePrice = (index: number, price: number) => {
         const updatedItems = items;
         if(price < 0)
@@ -178,7 +163,7 @@ const NewOrder = (props: NewOrderProps) => {
 
         updatedItems[index].price = price;
         setItems([...updatedItems])
-    }
+    };
     const changeUnit = (index: number, unit: string) => {
         const updatedItems = items;
         if(!units.includes(unit))
@@ -186,7 +171,7 @@ const NewOrder = (props: NewOrderProps) => {
 
         updatedItems[index].unit = unit;
         setItems([...updatedItems])
-    }
+    };
     return (
         <AppLayout goBack={false}>
             <SEO title={"Nowe zamówienie"}/>
@@ -215,18 +200,15 @@ const NewOrder = (props: NewOrderProps) => {
             </Container>
                 <List>
                     {
-                        items.map((item: any, i: number) => (
+                        items.map((item: Product, i: number) => (
                             <ListItem
                                 key={item.id}
                                 item={item}
                                 active={isActive(item.id)}
                                 onIncrementQuantity={() => changeQuantity(i, false)}
                                 onDecrementQuantity={() => changeQuantity(i, true)}
-                                onSetPrice={(e: any) => changePrice(i, e.target.value)}
-                                onSetUnit={(e: any) => {
-                                    if(!isFromDb(item.id))
-                                        changeUnit(i, e.target.value)
-                                }}
+                                onSetPrice={(e: KeyboardEvent<HTMLInputElement>) => changePrice(i, parseFloat((e.target as HTMLInputElement).value))}
+                                onSetUnit={(e: KeyboardEvent<HTMLInputElement>) => (!isFromDb(item.id) && changeUnit(i, (e.target as HTMLInputElement).value))}
                                 onToggleActiveItem={() => toggleActiveItemId(item.id)}
                                 onRemoveItem={() => removeItem(i)}
                                 error={error}
@@ -238,24 +220,26 @@ const NewOrder = (props: NewOrderProps) => {
                 <Container>
                     <Button onClick={saveItems}>Zamów</Button>
                 </Container>
-            {/*<Fab>*/}
-            {/*    <span className="material-icons">camera_alt</span>*/}
-            {/*</Fab>*/}
+
             <ModalWrapper active={modalOpen}>
                 <Modal>
                     <h3>Wybierz miasto obsługiwane przez DelivYou</h3>
                     <CityList>
-                        <li onClick={() => selectCity('Warszawa')}>Warszawa</li>
-                        <li onClick={() => selectCity('Kraków')}>Kraków</li>
-                        <li onClick={() => selectCity('Poznań')}>Poznań</li>
-                        <li onClick={() => selectCity('Gdańsk')}>Gdańsk</li>
-                        <li onClick={() => selectCity('Wrocław')}>Wrocław</li>
+                        {
+                            cities.sort().map((city: string )=> (
+                            <li
+                                key={city}
+                                onClick={() => selectCity(city)}>
+                                    {city}
+                            </li>
+                            ))
+                        }
                     </CityList>
                 </Modal>
             </ModalWrapper>
         </AppLayout>
     )
-}
+};
 const mapStateToProps = (state: any) => ({
     persistedItems: state.items,
     persistedCity: state.city.city
@@ -264,4 +248,5 @@ const mapDispatchToProps = {
     persistItems: makeAction(SAVE_ITEMS),
     persistCity: makeAction(SAVE_CITY)
 };
+
 export default connect(mapStateToProps, mapDispatchToProps)(NewOrder);

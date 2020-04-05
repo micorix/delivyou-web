@@ -1,4 +1,4 @@
-import React, {createRef, forwardRef, HTMLProps, useEffect, useState} from 'react';
+import React, {createRef, useState} from 'react';
 import {Input} from "./FormControls";
 import styled from "styled-components";
 import products from "../data/products";

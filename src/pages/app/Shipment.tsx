@@ -1,15 +1,16 @@
-import React, {FormEvent, SyntheticEvent, useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {navigate, RouteComponentProps} from "@reach/router";
 import SEO from "../../components/SEO";
 import styled from "styled-components";
 import Container from "../../components/Container";
-import {Button, Input, InputAddonGroup, InputGroup, Select} from "../../components/FormControls";
+import {Button, Input, InputGroup, Select} from "../../components/FormControls";
 import {useForm} from "react-hook-form";
 import {Separator} from "../../components/Utils";
 import AppLayout from "../../components/AppLayout";
 import {makeAction} from "../../store/makeAction";
-import {SAVE_DELIVERY_DATA, SAVE_ITEMS, SAVE_SHIPPING_DATA} from "../../store/actions";
+import {SAVE_SHIPPING_DATA} from "../../store/actions";
 import {connect} from "react-redux";
+import savedPlaces, {SavedPlace} from "../../data/savedPlaces";
 
 const RowGrid = styled.div`
     display: grid;
@@ -32,37 +33,23 @@ const SavedPlaceSelect = styled(Select)`
     }
 `;
 
-const savedPlaces = [
-    {
-        name: 'Dom',
-        id: "home",
-        data: {
-            recipient: 'Jan Kowalski',
-            street: 'Wiśniowa',
-            houseNo: 19,
-            apartmentNo: 12,
-            notes: ''
-        }
-    }
-]
 type ShipmentProps = RouteComponentProps & {
     persistData: any
     persistedData: any
 }
 const Shipment = (props: ShipmentProps) => {
-    console.log(props)
     const { register, handleSubmit, watch, setValue, errors } = useForm({
         defaultValues: props.persistedData
     });
     const savedPlace = watch('savedPlace');
     useEffect(() => {
     if(savedPlace !== 'select'){
-            const place = savedPlaces.find((x: any) => x.id === savedPlace);
+            const place = savedPlaces.find((x: SavedPlace) => x.id === savedPlace);
             Object.entries(place ? place.data: {}).forEach(([key, value]) => {
                 setValue(key, value)
             })
         }
-    }, [savedPlace])
+    }, [savedPlace, setValue])
     const saveShipment = (values: any) => {
         const {savedPlace, ...data} = values;
         props.persistData(data);
@@ -70,7 +57,7 @@ const Shipment = (props: ShipmentProps) => {
     }
     return (
         <AppLayout goBack={"/app/new-order"}>
-            <SEO title={"Nowe zamówienie"}/>
+            <SEO title={"Nowe zamówienie - Adres"}/>
             <Container>
                 <h1>Adres</h1>
                 <form onSubmit={handleSubmit(saveShipment)}>
