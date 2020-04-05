@@ -53,7 +53,7 @@ const Calc = styled.div`
     background: ${props => props.theme.colors.primary};
     border-radius: 10px;
     padding: 10px 1em;
-    margin-top: 2em;
+    margin-bottom: 2em;
     color: white;
 `;
 const Row = styled.div`
@@ -73,6 +73,7 @@ type PaymentProps = RouteComponentProps & {
     persistedItems: any
     persistedData: any
 }
+const formatNumber = (no: number) => no.toFixed(2).replace('.', ',');
 const Payment = (props: PaymentProps) => {
     const { register, handleSubmit} = useForm({
         defaultValues: props.persistedData
@@ -87,6 +88,21 @@ const Payment = (props: PaymentProps) => {
         <AppLayout goBack={"/app/shipment"}>
             <SEO title={"Nowe zamówienie - Płatność"}/>
             <Container>
+                <Calc>
+                    <h3>Podsumowanie</h3>
+                    <Row>
+                        <span>Koszt zakupów</span>
+                        <span>{formatNumber(shoppingPrice)} zł</span>
+                    </Row>
+                    <Row>
+                        <span>Cena dostawy</span>
+                        <span>{formatNumber(7)} zł</span>
+                    </Row>
+                    <Row>
+                        <span>Razem</span>
+                        <span>{formatNumber(shoppingPrice+7)} zł</span>
+                    </Row>
+                </Calc>
                 <form onSubmit={handleSubmit(complete)}>
                 <h1>Czas dostawy</h1>
                 <RowGrid>
@@ -130,20 +146,6 @@ const Payment = (props: PaymentProps) => {
                     <span className="material-icons">add</span>
                     <span className="action">Dodaj kartę</span>
                 </AddCardButton>
-                    <Calc>
-                        <Row>
-                            <span>Koszt zakupów</span>
-                            <span>{shoppingPrice.toFixed(2)} zł</span>
-                        </Row>
-                        <Row>
-                            <span>Cena dostawy</span>
-                            <span>7 zł</span>
-                        </Row>
-                        <Row>
-                            <span>Razem</span>
-                            <span>{(shoppingPrice+7).toFixed(2)} zł</span>
-                        </Row>
-                    </Calc>
                 <Centered>
                     <Button type={"submit"}>Zapłać</Button>
                 </Centered>
