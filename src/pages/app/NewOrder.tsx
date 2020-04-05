@@ -9,6 +9,9 @@ import ListItem from "../../components/ListItem";
 import products from "../../data/products";
 import AppLayout from "../../components/AppLayout";
 import { v4 as uuidv4 } from 'uuid';
+import {connect} from "react-redux";
+import {makeAction} from "../../store/makeAction";
+import {SAVE_CITY, SAVE_ITEMS} from "../../store/actions";
 
 const List = styled.ul`
     display: block;
@@ -81,18 +84,24 @@ const CitySelect = styled.div`
 `
 const units = ['kg', 'szt']
 const isFromDb = (id: string) => !id.includes('-');
-type CreateWorkspaceProps = RouteComponentProps
-const NewOrder = (props: CreateWorkspaceProps) => {
+type NewOrderProps = RouteComponentProps & {
+    persistItems: any
+    persistedItems: any
+    persistedCity: string
+    persistCity: any
+}
+const NewOrder = (props: NewOrderProps) => {
     const [inputValue, setInputValue] = useState('');
     const [inputItemId, setInputItemId] = useState<string | null>(null);
     const [activeItemId, setActiveItemId] = useState<string | null>(null);
-    const [city, setCity] = useState<null | string>(null);
-    const [modalOpen, setModalOpen] = useState<boolean>(true);
-    const [items, setItems] = useState<any[]>([]);
+    const [city, setCity] = useState<null | string>(props.persistedCity ? props.persistedCity : null);
+    const [modalOpen, setModalOpen] = useState<boolean>(!Boolean(props.persistedCity));
+    const [items, setItems] = useState<any[]>([...props.persistedItems]);
     const [error, setError] = useState<string | null>(null);
     const byId = (id: string): any => products.find((x: any) => x.id === id);
     const selectCity = (city: string) => {
         setCity(city);
+        props.persistCity(city);
         setModalOpen(false)
     }
     const addItem = (e: any) => {
@@ -147,6 +156,7 @@ const NewOrder = (props: CreateWorkspaceProps) => {
                 return;
             }
         }
+        props.persistItems(items);
         navigate('/app/shipment');
     };
     const isActive = (id: any) => id === activeItemId;
@@ -237,6 +247,7 @@ const NewOrder = (props: CreateWorkspaceProps) => {
                     <CityList>
                         <li onClick={() => selectCity('Warszawa')}>Warszawa</li>
                         <li onClick={() => selectCity('Kraków')}>Kraków</li>
+                        <li onClick={() => selectCity('Poznań')}>Poznań</li>
                         <li onClick={() => selectCity('Gdańsk')}>Gdańsk</li>
                         <li onClick={() => selectCity('Wrocław')}>Wrocław</li>
                     </CityList>
@@ -245,5 +256,12 @@ const NewOrder = (props: CreateWorkspaceProps) => {
         </AppLayout>
     )
 }
-
-export default  NewOrder
+const mapStateToProps = (state: any) => ({
+    persistedItems: state.items,
+    persistedCity: state.city.city
+});
+const mapDispatchToProps = {
+    persistItems: makeAction(SAVE_ITEMS),
+    persistCity: makeAction(SAVE_CITY)
+};
+export default connect(mapStateToProps, mapDispatchToProps)(NewOrder);

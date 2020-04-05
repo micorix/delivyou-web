@@ -6,6 +6,10 @@ import Container from "../../components/Container";
 import {Button, Input, InputAddonGroup, InputGroup, Select} from "../../components/FormControls";
 import {Separator} from "../../components/Utils";
 import AppLayout from "../../components/AppLayout";
+import {makeAction} from "../../store/makeAction";
+import {SAVE_DELIVERY_DATA, SAVE_SHIPPING_DATA} from "../../store/actions";
+import {connect} from "react-redux";
+import {useForm} from "react-hook-form";
 
 const CardItem = styled.div`
     border: 2px solid ${props => props.theme.colors.primary};
@@ -45,43 +49,51 @@ const RowGrid = styled.div`
     grid-column-gap: 1em;
     margin-bottom: 2em;
 `
-type CreateWorkspaceProps = RouteComponentProps
-const Payment = (props: CreateWorkspaceProps) => {
-    const complete = () => {
+type PaymentProps = RouteComponentProps & {
+    persistData: any
+    persistedData: any
+}
+const Payment = (props: PaymentProps) => {
+    const { register, handleSubmit} = useForm({
+        defaultValues: props.persistedData
+    });
+    const complete = (values: any) => {
+        props.persistData(values);
         navigate('/app/order-confirmation')
     }
     return (
         <AppLayout goBack={"/app/shipment"}>
-            <SEO title={"Nowe zamówienie"}/>
+            <SEO title={"Potwierdzenie zamówienia"}/>
             <Container>
+                <form onSubmit={handleSubmit(complete)}>
                 <h1>Czas dostawy</h1>
                 <RowGrid>
                     <div>
-                        <Select>
-                            <option>Niedziela 5.04</option>
-                            <option>Poniedziałek 6.04</option>
-                            <option>Wtorek 7.04</option>
-                            <option>Środa 8.04</option>
-                            <option>Czwartek 9.04</option>
-                            <option>Piątek 10.04</option>
+                        <Select name={"date"} ref={register}>
+                            <option value={"nd"}>Niedziela 5.04</option>
+                            <option value={"pn"}>Poniedziałek 6.04</option>
+                            <option value={"wt"}>Wtorek 7.04</option>
+                            <option value={"sr"}>Środa 8.04</option>
+                            <option value={"cz"}>Czwartek 9.04</option>
+                            <option value={"pt"}>Piątek 10.04</option>
                         </Select>
                     </div>
                     <div>
-                        <Select>
-                            <option>8:00-9:00</option>
-                            <option>9:00-10:00</option>
-                            <option>10:00-11:00</option>
-                            <option>11:00-12:00</option>
-                            <option>12:00-13:00</option>
-                            <option>13:00-14:00</option>
-                            <option>14:00-15:00</option>
-                            <option>15:00-16:00</option>
-                            <option>16:00-17:00</option>
-                            <option>17:00-18:00</option>
-                            <option>18:00-19:00</option>
-                            <option>19:00-20:00</option>
-                            <option>20:00-21:00</option>
-                            <option>21:00-22:00</option>
+                        <Select name={"time"} ref={register}>
+                            <option value={"8"}>8:00-9:00</option>
+                            <option value={"9"}>9:00-10:00</option>
+                            <option value={"10"}>10:00-11:00</option>
+                            <option value={"11"}>11:00-12:00</option>
+                            <option value={"12"}>12:00-13:00</option>
+                            <option value={"13"}>13:00-14:00</option>
+                            <option value={"14"}>14:00-15:00</option>
+                            <option value={"15"}>15:00-16:00</option>
+                            <option value={"16"}>16:00-17:00</option>
+                            <option value={"17"}>17:00-18:00</option>
+                            <option value={"18"}>18:00-19:00</option>
+                            <option value={"19"}>19:00-20:00</option>
+                            <option value={"20"}>20:00-21:00</option>
+                            <option value={"21"}>21:00-22:00</option>
                         </Select>
                     </div>
                 </RowGrid>
@@ -97,11 +109,19 @@ const Payment = (props: CreateWorkspaceProps) => {
                     <span className="action">Dodaj kartę</span>
                 </AddCardButton>
                 <Centered>
-                    <Button onClick={complete}>Zapłać</Button>
+                    <Button type={"submit"}>Zapłać</Button>
                 </Centered>
+                </form>
             </Container>
         </AppLayout>
     )
 }
 
-export default  Payment
+const mapStateToProps = (state: any) => ({
+    persistedData: state.deliveryData
+});
+const mapDispatchToProps = {
+    persistData: makeAction(SAVE_DELIVERY_DATA)
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Payment);

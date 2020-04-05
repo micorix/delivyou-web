@@ -7,6 +7,9 @@ import {Button, Input, InputAddonGroup, InputGroup, Select} from "../../componen
 import {useForm} from "react-hook-form";
 import {Separator} from "../../components/Utils";
 import AppLayout from "../../components/AppLayout";
+import {makeAction} from "../../store/makeAction";
+import {SAVE_DELIVERY_DATA, SAVE_ITEMS, SAVE_SHIPPING_DATA} from "../../store/actions";
+import {connect} from "react-redux";
 
 const RowGrid = styled.div`
     display: grid;
@@ -42,9 +45,15 @@ const savedPlaces = [
         }
     }
 ]
-type CreateWorkspaceProps = RouteComponentProps
-const Shipment = (props: CreateWorkspaceProps) => {
-    const { register, handleSubmit, watch, setValue, errors } = useForm();
+type ShipmentProps = RouteComponentProps & {
+    persistData: any
+    persistedData: any
+}
+const Shipment = (props: ShipmentProps) => {
+    console.log(props)
+    const { register, handleSubmit, watch, setValue, errors } = useForm({
+        defaultValues: props.persistedData
+    });
     const savedPlace = watch('savedPlace');
     useEffect(() => {
     if(savedPlace !== 'select'){
@@ -55,6 +64,8 @@ const Shipment = (props: CreateWorkspaceProps) => {
         }
     }, [savedPlace])
     const saveShipment = (values: any) => {
+        const {savedPlace, ...data} = values;
+        props.persistData(data);
         navigate('/app/payment');
     }
     return (
@@ -117,4 +128,10 @@ const Shipment = (props: CreateWorkspaceProps) => {
     )
 }
 
-export default  Shipment
+const mapStateToProps = (state: any) => ({
+    persistedData: state.shippingData
+});
+const mapDispatchToProps = {
+    persistData: makeAction(SAVE_SHIPPING_DATA)
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Shipment);
