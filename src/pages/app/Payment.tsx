@@ -50,7 +50,11 @@ const RowGrid = styled.div`
     margin-bottom: 2em;
 `
 const Calc = styled.div`
+    background: ${props => props.theme.colors.primary};
+    border-radius: 10px;
+    padding: 10px 1em;
     margin-bottom: 2em;
+    color: white;
 `;
 const Row = styled.div`
     display: flex;
@@ -60,9 +64,8 @@ const Row = styled.div`
     &:last-of-type{
         margin-top: 10px;
         padding-top: 20px;
-        border-top: 2px solid ${props => props.theme.colors.primary};
+        border-top: 2px solid white;
         font-weight: bold;
-        color: ${props => props.theme.colors.primary};
     }
 `
 type PaymentProps = RouteComponentProps & {
@@ -85,8 +88,8 @@ const Payment = (props: PaymentProps) => {
         <AppLayout goBack={"/app/shipment"}>
             <SEO title={"Nowe zamówienie - Płatność"}/>
             <Container>
+                <h1>Podsumowanie</h1>
                 <Calc>
-                    <h1>Podsumowanie</h1>
                     <Row>
                         <span>Koszt zakupów</span>
                         <span>{formatNumber(shoppingPrice)} zł</span>
