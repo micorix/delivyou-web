@@ -88,21 +88,6 @@ const Payment = (props: PaymentProps) => {
         <AppLayout goBack={"/app/shipment"}>
             <SEO title={"Nowe zamówienie - Płatność"}/>
             <Container>
-                <h1>Podsumowanie</h1>
-                <Calc>
-                    <Row>
-                        <span>Koszt zakupów</span>
-                        <span>{formatNumber(shoppingPrice)} zł</span>
-                    </Row>
-                    <Row>
-                        <span>Cena dostawy</span>
-                        <span>{formatNumber(7)} zł</span>
-                    </Row>
-                    <Row>
-                        <span>Razem</span>
-                        <span>{formatNumber(shoppingPrice+7)} zł</span>
-                    </Row>
-                </Calc>
                 <form onSubmit={handleSubmit(complete)}>
                 <h1>Czas dostawy</h1>
                 <RowGrid>
@@ -135,6 +120,21 @@ const Payment = (props: PaymentProps) => {
                         </Select>
                     </div>
                 </RowGrid>
+                    <h1>Podsumowanie</h1>
+                    <Calc>
+                        <Row>
+                            <span>Koszt zakupów</span>
+                            <span>{formatNumber(shoppingPrice)} zł</span>
+                        </Row>
+                        <Row>
+                            <span>Cena dostawy</span>
+                            <span>{formatNumber(7)} zł</span>
+                        </Row>
+                        <Row>
+                            <span>Razem</span>
+                            <span>{formatNumber(shoppingPrice+7)} zł</span>
+                        </Row>
+                    </Calc>
                 <h1>Wybierz formę płatności</h1>
                 <CardItem>
                     <span className="material-icons">credit_card</span>
