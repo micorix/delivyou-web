@@ -7,6 +7,7 @@ import {Button, Input, InputAddonGroup, Select} from "../../components/FormContr
 import Autocomplete from "../../components/Autocomplete";
 import ListItem from "../../components/ListItem";
 import products from "../../data/products";
+import AppLayout from "../../components/AppLayout";
 
 const ItemInput = styled(Input)`
     border-top-right-radius: 0;
@@ -25,10 +26,60 @@ const List = styled.ul`
     margin: 2em 0 0 0;
 `
 
-const suggestions = [
-    'Makaron',
-    'Pomidory'
-]
+const Fab = styled.div`
+    position: absolute;
+    bottom: 1em;
+    right: 1em;
+    padding: 10px;
+    background: ${props => props.theme.colors.primary};
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .material-icons{
+        font-size: 1.8em !important;
+    }
+`;
+const ModalWrapper = styled.div<{active: boolean}>`
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    background: rgba(0,0,0,0.7);
+    display: ${props => props.active ? 'block' :' none'};
+`;
+const Modal = styled.div`
+    width: 60%;
+    margin: 20vh auto 0 auto;
+    padding: 10px;
+    background: white;
+    border-radius: 5px;
+`;
+const CityList = styled.ul`
+    display: block;
+    padding-inline-start: 0;
+    margin: 0em 0 0 0;
+    
+    li{
+        display: block;
+        padding: .5em 10px;
+        text-align: center;
+        cursor: pointer;
+    }
+`;
+const CitySelect = styled.div`
+    font-weight: bold;
+    margin-bottom: 2em;
+    small{
+        font-weight: normal;
+        display: block;
+        margin-top: .5em;
+        cursor: pointer;
+    }
+`
 const units = ['kg', 'szt']
 const isFromDb = (id: string) => !id.includes('-');
 type CreateWorkspaceProps = RouteComponentProps
@@ -36,8 +87,14 @@ const NewOrder = (props: CreateWorkspaceProps) => {
     const [inputValue, setInputValue] = useState('');
     const [inputItemId, setInputItemId] = useState<string | null>(null);
     const [activeItemId, setActiveItemId] = useState<string | null>(null);
+    const [city, setCity] = useState<null | string>(null);
+    const [modalOpen, setModalOpen] = useState<boolean>(true);
     const [items, setItems] = useState<any[]>([]);
     const byId = (id: string): any => products.find((x: any) => x.id === id);
+    const selectCity = (city: string) => {
+        setCity(city);
+        setModalOpen(false)
+    }
     const addItem = (e: any) => {
         e.persist();
         e.preventDefault();
@@ -49,7 +106,7 @@ const NewOrder = (props: CreateWorkspaceProps) => {
                 ...items,
                 {
                     ...byId(inputItemId),
-                    quantity: 1
+                    quantity: 1,
                 }
             ]);
         }else{
@@ -59,7 +116,8 @@ const NewOrder = (props: CreateWorkspaceProps) => {
                     label: inputValue,
                     id: '--s',
                     price: 0,
-                    quantity: 1
+                    quantity: 1,
+                    unit: 'select'
                 }
             ]);
         }
@@ -73,6 +131,15 @@ const NewOrder = (props: CreateWorkspaceProps) => {
         setItems([...updatedItems])
     };
     const saveItems = () => {
+        if (items.length === 0){
+            return;
+        }
+        for(const item of items){
+            if(item.price <= 0 || item.unit === 'select'){
+                setActiveItemId(item.id);
+                return;
+            }
+        }
         navigate('/app/shipment');
     };
     const isActive = (id: any) => id === activeItemId;
@@ -104,9 +171,11 @@ const NewOrder = (props: CreateWorkspaceProps) => {
         setItems([...updatedItems])
     }
     return (
-        <>
+        <AppLayout goBack={false}>
             <SEO title={"Nowe zamówienie"}/>
+
             <Container>
+                <CitySelect>Wybrane miasto: {city} <small onClick={() => setModalOpen(true)}>Zmień miasto</small></CitySelect>
                 <h1>Co Ci dostarczyć?</h1>
                 <form onSubmit={addItem}>
                     <InputAddonGroup>
@@ -145,7 +214,21 @@ const NewOrder = (props: CreateWorkspaceProps) => {
                 <Container>
                     <Button onClick={saveItems}>Zamów</Button>
                 </Container>
-        </>
+            <Fab>
+                <span className="material-icons">camera_alt</span>
+            </Fab>
+            <ModalWrapper active={modalOpen}>
+                <Modal>
+                    <h3>Wybierz miasto obsłgiwane przez DelivYou</h3>
+                    <CityList>
+                        <li onClick={() => selectCity('Warszawa')}>Warszawa</li>
+                        <li onClick={() => selectCity('Kraków')}>Kraków</li>
+                        <li onClick={() => selectCity('Gdańsk')}>Gdańsk</li>
+                        <li onClick={() => selectCity('Wrocław')}>Wrocław</li>
+                    </CityList>
+                </Modal>
+            </ModalWrapper>
+        </AppLayout>
     )
 }
 

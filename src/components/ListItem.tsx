@@ -11,6 +11,9 @@ const ListItemWrapper = styled.li`
         border: none;
         background: none;
     }
+    .item{
+        margin-left: 1em;
+    }
     .wrapper{
     display: flex;
     align-items: center;
@@ -66,7 +69,7 @@ const ListItem = (props: ListItemProps) => {
                         </span>
                     </span>
                     <span>
-                        <span>{props.item.quantity} {props.item.unit}</span>
+                        <span>{props.item.quantity} {props.item.unit === 'select' ? '' : props.item.unit}</span>
                         <ExpandButton
                             active={props.active}
                             onClick={props.onToggleActiveItem}>

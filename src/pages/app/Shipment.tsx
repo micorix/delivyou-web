@@ -6,6 +6,7 @@ import Container from "../../components/Container";
 import {Button, Input, InputAddonGroup, InputGroup, Select} from "../../components/FormControls";
 import {useForm} from "react-hook-form";
 import {Separator} from "../../components/Utils";
+import AppLayout from "../../components/AppLayout";
 
 const RowGrid = styled.div`
     display: grid;
@@ -57,7 +58,7 @@ const Shipment = (props: CreateWorkspaceProps) => {
         navigate('/app/payment');
     }
     return (
-        <>
+        <AppLayout goBack={"/app/new-order"}>
             <SEO title={"Nowe zamówienie"}/>
             <Container>
                 <h1>Adres</h1>
@@ -103,7 +104,7 @@ const Shipment = (props: CreateWorkspaceProps) => {
                 </Centered>
                 </form>
             </Container>
-        </>
+        </AppLayout>
     )
 }
 
